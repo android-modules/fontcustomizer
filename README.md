@@ -17,7 +17,6 @@ public class AppController extends Application{
     public void onCreate() {
         super.onCreate();
         Context context = getApplicationContext();
-        FacebookSdk.sdkInitialize(getApplicationContext());
 
         //Add custom font to HashMap
         FontCache.getInstance(context).addFont("regular", "SourceSansPro-Regular.ttf");
