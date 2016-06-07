@@ -8,6 +8,15 @@ Android module for easy using a custom fonts in the project
 ```java
         FontCache.getInstance(context).addFont("any name here", "[font-file].ttf");
 ```
+* add dependency to build.gradle
+```
+dependencies {
+
+....
+
+compile project(':fontcustomizer');
+}
+```
 
 Example:
 ```java
