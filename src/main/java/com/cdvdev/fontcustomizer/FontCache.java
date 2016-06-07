@@ -59,12 +59,16 @@ public class FontCache {
             Log.e(TAG, "Couldn't find font " + fontName + ". Maybe you need to call addFont() first?");
             return null;
         }
-        if (cache.containsKey(fontFilename)) {
-            return cache.get(fontFilename);
-        } else {
-            Typeface typeface = Typeface.createFromAsset(sAppContext.getResources().getAssets(), FONT_DIR + "/" + fontFilename);
-            cache.put(fontFilename, typeface);
-            return typeface;
+        try{
+           if (cache.containsKey(fontFilename)) {
+               return cache.get(fontFilename);
+           } else {
+               Typeface typeface = Typeface.createFromAsset(sAppContext.getResources().getAssets(), FONT_DIR + "/" + fontFilename);
+               cache.put(fontFilename, typeface);
+               return typeface;
+           }
+        } catch (Exception e) {
+           Log.e("fontcustomezer", "FontCache.get(): Could not get typeface - " + e.getMessage, e);
         }
     }
 }
