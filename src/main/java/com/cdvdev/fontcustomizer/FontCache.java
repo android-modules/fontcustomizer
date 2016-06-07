@@ -68,7 +68,9 @@ public class FontCache {
                return typeface;
            }
         } catch (Exception e) {
-           Log.e("fontcustomezer", "FontCache.get(): Could not get typeface - " + e.getMessage, e);
+           Log.e("fontcustomezer", "FontCache.get(): Could not get typeface - " + e.getMessage(), e);
         }
+        
+        return null;
     }
 }
