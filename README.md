@@ -12,8 +12,14 @@ dependencies {
 compile project(':fontcustomizer');
 }
 ```
-* put [font-file].ttf into app/src/main/assets/fonts
-* call this for each .ttf in onCreate() method of Application or Activity or Fragment:
+* put your [font-file].ttf files into app/src/main/assets/fonts;
+* in onCreate() method (of Application or Activity or Fragment) call this for caching all names of the fonts located in the assets/fonts:
+```java
+        FontCache.getInstance(getApplicationContext());
+``` 
+  
+
+  or call this for each .ttf for caching a custom names of the fonts:
 ```java
         FontCache.getInstance(getApplicationContext()).addFont("any-name", "[font-file].ttf");
 ```
