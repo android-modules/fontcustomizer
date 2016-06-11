@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class for cache Custom Fonts
+ * Class for Caching Custom Fonts
  *
  * @author Dmitriy V. Chernysh (dmitriy.chernysh@gmail.com)
  *
@@ -19,56 +19,60 @@ public class FontCache {
 
     private static String TAG = "FontCache";
     private static final String FONT_DIR = "fonts";
-    private static Map<String, Typeface> cache = new HashMap<>();
-    private static Map<String, String> fontMapping = new HashMap<>();
+
     private static FontCache sInstance;
-    private static Context sAppContext;
 
-    public static FontCache getInstance(Context appContext) {
-        if (sInstance == null) {
-            sAppContext = appContext;
-            sInstance = new FontCache();
-        }
-        return sInstance;
-    }
+    private Map<String, Typeface> mCache;
+    private Map<String, String> mFontMapping;
+    private AssetManager mAssetManager;
 
-    public void addFont(String name, String fontFilename) {
-        fontMapping.put(name, fontFilename);
-    }
+    private FontCache(Context appContext) {
+        mFontMapping = new HashMap<>();
+        mCache = new HashMap<>();
+        mAssetManager = appContext.getResources().getAssets();
 
-    private FontCache() {
-        AssetManager am = sAppContext.getResources().getAssets();
         String fileList[];
         try {
-            fileList = am.list(FONT_DIR);
+            fileList = mAssetManager.list(FONT_DIR);
         } catch (IOException e) {
-            Log.e(TAG, "Error loading fonts from assets/fonts.");
+            Log.e(TAG, "FontCache(): Error loading fonts from assets/fonts - " + e.getMessage(), e);
             return;
         }
 
         for (String filename : fileList) {
             String alias = filename.substring(0, filename.lastIndexOf('.'));
-            fontMapping.put(alias, filename);
-            fontMapping.put(alias.toLowerCase(), filename);
+            mFontMapping.put(alias, filename);
+            mFontMapping.put(alias.toLowerCase(), filename);
         }
     }
 
+    public static FontCache getInstance(Context appContext) {
+        if (sInstance == null) {
+            sInstance = new FontCache(appContext);
+        }
+        return sInstance;
+    }
+
+    public void addFont(String name, String fontFilename) {
+        mFontMapping.put(name, fontFilename);
+    }
+
     public Typeface get(String fontName) {
-        String fontFilename = fontMapping.get(fontName);
+        String fontFilename = mFontMapping.get(fontName);
         if (fontFilename == null) {
-            Log.e(TAG, "Couldn't find font " + fontName + ". Maybe you need to call addFont() first?");
+            Log.e(TAG, "Couldn't find font " + fontName + ". You need to call addFont() or addFontsFromAssets() first?");
             return null;
         }
         try{
-           if (cache.containsKey(fontFilename)) {
-               return cache.get(fontFilename);
+           if (mCache.containsKey(fontFilename)) {
+               return mCache.get(fontFilename);
            } else {
-               Typeface typeface = Typeface.createFromAsset(sAppContext.getResources().getAssets(), FONT_DIR + "/" + fontFilename);
-               cache.put(fontFilename, typeface);
+               Typeface typeface = Typeface.createFromAsset(mAssetManager, FONT_DIR + "/" + fontFilename);
+               mCache.put(fontFilename, typeface);
                return typeface;
            }
         } catch (Exception e) {
-           Log.e("fontcustomezer", "FontCache.get(): Could not get typeface - " + e.getMessage(), e);
+           Log.e(TAG, "FontCache.get(): Could not get typeface - " + e.getMessage(), e);
         }
         
         return null;
